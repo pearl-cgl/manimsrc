@@ -22,6 +22,37 @@ class EquationAndGraphics(Scene):
         )
         self.wait()
 
+class Equivariance(ThreeDScene):
+    def construct(self):
+        resolution_fa = 8
+        self.set_camera_orientation(phi=75 * DEGREES, theta=-160 * DEGREES)
+        axes = ThreeDAxes(x_range=(0, 5, 1), y_range=(0, 5, 1), z_range=(-1, 1, 0.5))
+        def param_surface(u, v):
+            x = u
+            y = v
+            z = 0.1 * np.sin(x) * np.cos(y)
+            return z
+        surface_plane = Surface(
+            lambda u, v: axes.c2p(u, v, param_surface(u, v)),
+            resolution=(resolution_fa, resolution_fa),
+            v_range=[0, 5],
+            u_range=[0, 5],
+        )
+        surface_plane.set_style(fill_opacity=1)
+        surface_plane.set_fill_by_value(axes=axes, colorscale=[(RED, -0.5), (YELLOW, 0), (GREEN, 0.5)], axis=2)
+
+        background_tangent = Surface(
+            lambda u, v: axes.c2p(u, v,
+                0.1 * np.cos(3) * np.cos(3) * (u - 3) - 0.1 * np.sin(3) * np.sin(3) * (v - 3) + .1),
+            resolution=(resolution_fa, resolution_fa),
+            v_range=[2, 4],
+            u_range=[2, 4],
+            fill_opacity=.5,
+            fill_color=BLUE,
+        )
+        self.add(surface_plane, background_tangent)
+        self.wait(3)
+
 # Z := (\f \x f (\v x x v)) (\f \x f (\v x x v))
 # (Lf. Lx. f (Lv. x x v)) (Lf. Lx. f (Lv. x x v)) https://lambster.dev/
 # when compared to Y (the narcissistic bird as defined by Smullyan),
